@@ -1,0 +1,16 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: google/cloud-sdk
+    tag: alpine
+
+inputs:
+- name: bigQueryStatePublisher
+
+run:
+  path: selfhydro/.ci/deploy.sh
+  params:
+    GoogleServiceAccountCredentials: ((gcpConcourseServiceAccountCert))

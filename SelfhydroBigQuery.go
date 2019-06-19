@@ -18,18 +18,22 @@ type PubSubMessage struct {
 }
 
 type SeflhydroState struct {
-	AmbientTemperature float64 `json:"ambientTemperature"`
-	AmbientHumidity    float64 `json:"ambientHumidity"`
-	Time               string  `json:"time"`
-	deviceId           string
+	AmbientTemperature          float64 `json:"ambientTemperature"`
+	AmbientHumidity             float64 `json:"ambientHumidity"`
+	WaterTemperature            float64 `json:"waterTemperature"`
+	WaterElectricalConductivity float64 `json:"waterElectricalConductivity"`
+	Time                        string  `json:"time"`
+	deviceId                    string
 }
 
 type SelfhydroStateTable struct {
-	WaterLevel         bigquery.NullFloat64 `bigquery:"waterLevel"`
-	AmbientTemperature bigquery.NullFloat64 `bigquery:"ambientTemperature"`
-	AmbientHumidity    bigquery.NullFloat64 `bigquery:"ambientHumidity"`
-	Time               civil.DateTime       `bigquery:"time"`
-	DeviceId           string               `bigquery:"deviceId"`
+	WaterLevel                  bigquery.NullFloat64 `bigquery:"waterLevel"`
+	AmbientTemperature          bigquery.NullFloat64 `bigquery:"ambientTemperature"`
+	AmbientHumidity             bigquery.NullFloat64 `bigquery:"ambientHumidity"`
+	WaterTemperature            bigquery.NullFloat64 `bigquery:"waterTemperature"`
+	WaterElectricalConductivity bigquery.NullFloat64 `bigquery:"waterElectricalConductivity"`
+	Time                        civil.DateTime       `bigquery:"time"`
+	DeviceId                    string               `bigquery:"deviceId"`
 }
 
 var bigqueryClient *bigquery.Client
@@ -73,10 +77,14 @@ func saveToStateTable(selfhydroState SeflhydroState) error {
 	log.Printf("time parsed: %v", time)
 	datetime := civil.DateTimeOf(time)
 	log.Printf("time converted to civil: %v", datetime)
-	temperature := bigquery.NullFloat64{Float64: selfhydroState.AmbientTemperature, Valid: true}
-	humidity := bigquery.NullFloat64{Float64: selfhydroState.AmbientHumidity, Valid: true}
+
+	temperature := convertFloatToBigQueryFloat(selfhydroState.AmbientTemperature)
+	humidity := convertFloatToBigQueryFloat(selfhydroState.AmbientHumidity)
+
+	waterTemperature := convertFloatToBigQueryFloat(selfhydroState.WaterTemperature)
+	waterElectricalConductivity := convertFloatToBigQueryFloat(selfhydroState.WaterElectricalConductivity)
 	state := []*SelfhydroStateTable{
-		{DeviceId: selfhydroState.deviceId, Time: datetime, AmbientTemperature: temperature, AmbientHumidity: humidity},
+		{DeviceId: selfhydroState.deviceId, Time: datetime, AmbientTemperature: temperature, AmbientHumidity: humidity, WaterTemperature: waterTemperature, WaterElectricalConductivity: waterElectricalConductivity},
 	}
 	if err := tableInserter.Put(ctx, state); err != nil {
 		log.Printf("cant insert state into big query: ")
@@ -84,4 +92,11 @@ func saveToStateTable(selfhydroState SeflhydroState) error {
 		return err
 	}
 	return nil
+}
+
+func convertFloatToBigQueryFloat(value float64) bigquery.NullFloat64 {
+	if value == 0 {
+		return bigquery.NullFloat64{}
+	}
+	return bigquery.NullFloat64{Float64: value, Valid: true}
 }

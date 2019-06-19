@@ -1,0 +1,22 @@
+---
+resources:
+- name: bigQueryStatePublisher
+  type: git
+  source:
+    uri: https://github.com/selfhydro/biggQueryPublisher
+    branch: master
+
+jobs:
+- name: unit
+  plan:
+  - get: bigQueryStatePublisher
+    trigger: true
+  - task: unit
+    file: biggQueryPublisher/.ci/test.yml
+
+- name: deploy
+  plan:
+    - get: bigQueryStatePublisher
+      trigger: true
+    - task: deploy
+      file: biggQueryPublisher/.ci/deploy.yml
