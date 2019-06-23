@@ -1,4 +1,4 @@
-package selfhydro
+package bigQueryPublisher
 
 import (
 	"context"

@@ -2,8 +2,8 @@
 
 set -ex
 
-cd ./selfhydro
+cd ./BigQueryPublisher
 go get .
-go test -cover ./... | tee test_coverage.txt
+go test -cover | tee test_coverage.txt
 
 mv test_coverage.txt $GOPATH/coverage-results/.
