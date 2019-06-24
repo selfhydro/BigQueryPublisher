@@ -42,7 +42,7 @@ var projectId = os.Getenv("GCP_PROJECT")
 var datasetId = os.Getenv("DATASET_ID")
 var tableId = os.Getenv("TABLE_ID")
 
-func init() {
+func setupBigQueryClient() {
 	var err error
 	ctx = context.Background()
 	bigqueryClient, err = bigquery.NewClient(ctx, projectId)
@@ -52,6 +52,9 @@ func init() {
 }
 
 func TransferStateToBigQuery(ctx context.Context, m PubSubMessage) error {
+	if bigqueryClient == nil {
+		setupBigQueryClient()
+	}
 	state := DeseraliseState(m.Data)
 	state.deviceId = m.Attributes["deviceId"]
 	log.Printf("received state from: %s, the current ambient temperature is: %f as of %v", state.deviceId, state.AmbientTemperature, state.Time)
