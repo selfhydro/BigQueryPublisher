@@ -13,4 +13,4 @@ inputs:
 run:
   path: BigQueryPublisher/.ci/deploy.sh
   params:
-    GoogleServiceAccountCredentials: ((gcpConcourseServiceAccountCert))
+    GoogleServiceAccountCredentials: ((gcpConcourseServiceAccount.Cert))
