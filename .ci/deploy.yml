@@ -8,9 +8,9 @@ image_resource:
     tag: alpine
 
 inputs:
-- name: bigQueryPublisher
+- name: BigQueryPublisher
 
 run:
-  path: bigQueryPublisher/.ci/deploy.sh
+  path: BigQueryPublisher/.ci/deploy.sh
   params:
     GoogleServiceAccountCredentials: ((gcpConcourseServiceAccountCert))

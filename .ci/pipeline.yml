@@ -1,6 +1,6 @@
 ---
 resources:
-- name: bigQueryPublisher
+- name: BigQueryPublisher
   type: git
   source:
     uri: https://github.com/selfhydro/BigQueryPublisher.git
@@ -8,15 +8,15 @@ resources:
 jobs:
 - name: unit
   plan:
-  - get: bigQueryPublisher
+  - get: BigQueryPublisher
     trigger: true
   - task: unit
-    file: bigQueryPublisher/.ci/test.yml
+    file: BigQueryPublisher/.ci/test.yml
 
 - name: deploy
   plan:
-    - get: bigQueryPublisher
+    - get: BigQueryPublisher
       trigger: true
       passed: [unit]
     - task: deploy
-      file: bigQueryPublisher/.ci/deploy.yml
+      file: BigQueryPublisher/.ci/deploy.yml
