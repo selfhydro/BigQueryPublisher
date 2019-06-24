@@ -8,9 +8,9 @@ image_resource:
     tag: alpine
 
 inputs:
-- name: bigQueryStatePublisher
+- name: bigQueryPublisher
 
 run:
-  path: selfhydro/.ci/deploy.sh
+  path: bigQueryPublisher/.ci/deploy.sh
   params:
     GoogleServiceAccountCredentials: ((gcpConcourseServiceAccountCert))

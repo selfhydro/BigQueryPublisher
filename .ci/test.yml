@@ -8,10 +8,10 @@ image_resource:
     tag: stretch
 
 inputs:
-- name: bigQueryStatePublisher
+- name: bigQueryPublisher
 
 outputs:
 - name: coverage-results
 
 run:
-  path: selfhydro/.ci/unit-test.sh
+  path: bigQueryPublisher/.ci/unit-test.sh
